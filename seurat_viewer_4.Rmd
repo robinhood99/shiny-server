@@ -1,0 +1,231 @@
+---
+title: "Cell Type Markers"
+runtime: shiny
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    social: menu
+    source_code: embed
+    vertical_layout: fill
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+library(AnnotationDbi)
+library(dplyr)
+library(DT)
+library(flexdashboard)
+library(ggplot2)
+library(ggridges)
+library(here)
+library(org.Mm.eg.db)
+library(Seurat)
+library(shiny)
+library(tidyr)
+library(viridis)
+library(yaml)
+
+#Use set_here(), to make sure here is in your current working directory
+
+source_all <- function() {
+  source(here("R","seurat_viewer_lib.R"))
+
+  source(here("R","seurat_wrapper.R"))
+
+  source(here("R","marker_viz.R"))
+}
+
+source_all()
+```
+
+```{r global_vars, include=FALSE}
+SEURAT_OBJ_FILE <- here("data","s02_sce_cca_aligned.Rds")
+
+#MARKERS_FILE_1 <- here("markers.yaml")
+PREDEFINED_MARKERS_FILE <- here("data","cell_type_markers.yaml")
+```
+
+```{r include=FALSE}
+SEURAT_OBJ <- readRDS(SEURAT_OBJ_FILE)
+```
+
+t-SNE & Clustering {data-orientation=rows}
+=====================================
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### t-SNE
+
+```{r}
+renderPlot({
+  seurat.plot_tsne(sce = SEURAT_OBJ, 
+                   cell_attribute = "cluster", 
+                   label_clusters = TRUE, 
+                   alpha = 0.4)
+})
+```
+
+```{r}
+the_counts <- seurat.get_counts(sce = SEURAT_OBJ, 
+                                 format = "dataframe_long", 
+                                 add_cell_metadata = TRUE, 
+                                 cell_metadata_columns = NULL, 
+                                 gene_filter = c("sox17", "mrpl15"), 
+                                 data_type = "normalized")
+
+dim(the_counts)
+
+idx <- tolower(rownames(SEURAT_OBJ@raw.data)) %in% tolower(c("sox17", "mrpl15"))
+# idx
+counts_mat <- as.matrix(SEURAT_OBJ@data[idx, ])
+dim(counts_mat)
+```
+
+### Clusters
+
+```{r}
+source_all()
+
+renderPlot({
+  seurat.plot_cells_per_cluster(sce = SEURAT_OBJ)
+})
+```
+
+Cell Type Markers {data-orientation=rows}
+=====================================
+
+Cell Type Markers {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+ui.cell_types(input_id = "ui_cell_types", 
+              markers_file = PREDEFINED_MARKERS_FILE)
+
+ui.clusters(input_id = "ui_cell_type_cluster", 
+            sce = SEURAT_OBJ)
+
+actionButton("go_cell_type_markers", "Plot!")
+
+ui.marker_plot_types(input_id = "ui_cell_type_markers_plot_type")
+
+cell_type_markers <- eventReactive(input$go_cell_type_markers, {
+  get_cell_type_markers_by_type(markers_file = PREDEFINED_MARKERS_FILE,
+                                selected_cell_types = input$ui_cell_types)
+})
+
+# user_defined_marker_plot_type <- reactive(as.character(input$ui_user_defined_marker_plot_type))
+```
+
+Row
+-------------------------------------
+
+```{r}
+# renderPrint({
+#   cell_type_markers()
+# })
+
+renderPlot({
+  if (length(cell_type_markers()) > 0) {
+    x <- input$ui_cell_type_markers_plot_type
+    if (x == "violin") {
+      seurat.plot_markers_violin(sce = SEURAT_OBJ,
+                                 markers = cell_type_markers(),
+                                 data_type = "normalized",
+                                 clusters=NULL,
+                                 y_intercept=NULL,
+                                 ncol=2)
+    } else if (x == "ridge") {
+      seurat.plot_markers_ridge(sce = SEURAT_OBJ,
+                                markers = cell_type_markers(),
+                                data_type = "normalized",
+                                clusters=NULL,
+                                x_intercept=NULL,
+                                ncol=2)
+    } else if (x == "bar") {
+      seurat.plot_markers_bar(sce = SEURAT_OBJ,
+                              markers = cell_type_markers(),
+                              data_type = "normalized",
+                              clusters=NULL,
+                              y_intercept=NULL,
+                              ncol=2)
+    } else if (x == "tsne") {
+      seurat.plot_markers_tsne(sce = SEURAT_OBJ,
+                               markers = cell_type_markers(),
+                               data_type = "normalized",
+                               clusters=NULL,
+                               y_intercept=NULL,
+                               ncol=2)
+    }
+  }
+})
+
+# renderPrint(head(rownames(SEURAT_OBJ@raw.data)))
+```
+
+User-Defined Markers {data-orientation=rows}
+=====================================
+
+User-Defined Markers {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+
+textAreaInput(inputId = "txi_user_defined_markers",
+              label = h3("Markers"), 
+              value = "sox17 mrpl15 lypla1")
+
+actionButton("go_user_defined_markers", "Plot!")
+
+ui.marker_plot_types(input_id = "ui_user_defined_marker_plot_type")
+
+user_defined_markers <- eventReactive(input$go_user_defined_markers, {
+  unlist(strsplit(input$txi_user_defined_markers, " "))
+})
+
+# user_defined_marker_plot_type <- reactive(as.character(input$ui_user_defined_marker_plot_type))
+```
+
+Row
+-------------------------------------
+
+```{r}
+renderPlot({
+  if (length(user_defined_markers()) > 0) {
+    x <- input$ui_user_defined_marker_plot_type
+    if (x == "violin") {
+      seurat.plot_markers_violin(sce = SEURAT_OBJ, 
+                                 markers = user_defined_markers(),  
+                                 data_type = "normalized",
+                                 clusters=NULL,
+                                 y_intercept=NULL, 
+                                 ncol=2) 
+    } else if (x == "ridge") {
+      seurat.plot_markers_ridge(sce = SEURAT_OBJ, 
+                                markers = user_defined_markers(), 
+                                data_type = "normalized",
+                                clusters=NULL,
+                                x_intercept=NULL, 
+                                ncol=2) 
+    } else if (x == "bar") {
+      seurat.plot_markers_bar(sce = SEURAT_OBJ, 
+                              markers = user_defined_markers(), 
+                              data_type = "normalized",
+                              clusters=NULL,
+                              y_intercept=NULL, 
+                              ncol=4) # Becca changed this from 2 to 1
+    } else if (xSSS == "tsne") {
+      seurat.plot_markers_tsne(sce = SEURAT_OBJ, 
+                               markers = user_defined_markers(), 
+                               data_type = "normalized",
+                               clusters=NULL,
+                               y_intercept=NULL, 
+                               ncol=2) 
+    }
+  }
+})
+
+# renderPrint(head(rownames(SEURAT_OBJ@raw.data)))
+```
+
