@@ -1,0 +1,213 @@
+neuron_mature:
+  name: Neuron - mature 
+  markers:
+    - Rbfox3
+    - Map2
+    - Nefm
+    - Nefh
+    - Nefl
+    - Syp
+    - Dlg4
+    - Thy1
+    - Camk2a
+    - Camk2b
+    - Syn1
+
+intermediate_progenitor_cell:
+  name: Intermediate progenitor cell
+  markers:
+    - Eomes
+    - Ascl1
+
+neuron_immature:
+  name: Neuron - immature
+  markers:
+    - Dcx
+    - Tubb3
+    - Neurod1
+    - Tbr1
+    - Stmn1
+
+neuron_glutamatergic:
+  name: Neuron - glutamatergic
+  markers:
+    - Slc17a7
+    - Slc17a6
+    - Grin1
+    - Grin2b
+    - Gls
+    - Glul
+
+neuron_gabaergic:
+  name: Neuron - GABAergic
+  markers:
+    - Slc6a1
+    - Gabbr1
+    - Gabbr2
+    - Gad2
+    - Gad1
+    - Npy
+    - Pvalb
+
+neuron_dopaminergic:
+  name: Neuron - dopaminergic
+  markers:
+    - Th
+    - Slc6a3
+    - Foxa2
+    - Kcnj6
+    - Nr4a2
+    - Lmx1b
+
+neuron_serotonergic:
+  name: Neuron - serotonergic
+  markers:
+    - Tph1
+    - Slc6a4
+    - Fev
+    - Slc6a3
+
+neuron_cholinergic:
+  name: Neuron - cholinergic
+  markers:
+    - Chat
+    - Slc18a3
+    - Ache
+
+neuroepithelial_cell:
+  name: Neuroepithelial cell
+  markers:
+    - Nes
+    - Sox2
+    - Notch1
+    - Hes1
+    - Hes3
+    - Ocln
+    - Cdh1
+    - Sox10
+
+radial_glia:
+  name: Radial glia
+  markers:
+    - Vim
+    - Pax6
+    - Hes1
+    - Hes5
+    - Gfap
+    - Slc1a3
+    - Fabp7
+    - Tnc
+    - Cdh2
+    - Nes
+    - Sox2
+
+microglia:
+  name: Microglia
+  markers:
+    - Tmem119
+    - Itgam
+    - Ptprc
+    - Aif1
+    - Cx3cr1
+    - Adgre1
+    - Cd68
+    - Cd40
+    - Trem2
+
+macrophage:
+  name: Macrophage
+  markers:
+    - Mrc1
+    - Lyve1
+
+astrocyte:
+  name: Astrocyte
+  markers:
+    - Gfap
+    - Slc1a3
+    - Slc1a2
+    - Glul
+    - S100b
+    - Aldh1l1
+    - Aldoc
+    - Mfge8
+    - Id4
+    - Rfx4
+    - Aqp4
+
+oligodendrocyte_precursor_cell:
+  name: Oligodendrocyte precursor cell
+  markers:
+    - Pdgfra
+    - Cspg4
+    - Olig1
+    - Olig2
+
+oligodendrocyte_mature:
+  name: Oligodendrocyte - mature
+  markers:
+    - Olig1
+    - Olig2
+    - Olig3
+    - Cldn11
+    - Mbp
+    - Mog
+    - Sox10
+    - Hapln2
+    - Plp1
+    - Cnp
+
+schwann_cell_precursor:
+  name: Schwann cell precursor
+  markers:
+    - Sox10
+    - Gap43
+    - Fabp7
+    - Mpz
+    - Dhh
+    - Ngfr
+
+schwann_cell_myelinating:
+  name: Schwann cell - myelinating
+  markers:
+    - Sox10
+    - S100b
+    - Egr2
+    - Mbp
+    - Mpz
+
+schwann_cell_nonmyelinating:
+  name: Schwann cell - non-myelinating
+  markers:
+    - Sox10
+    - Gap43
+    - S100b
+    - Ncam1
+    - Ncam2
+    - Ngfr
+
+endothelial_cell:
+  name: Endothelial cell
+  markers:
+    - Ly6c1
+    - Cldn5
+    - Tek
+    - Kdr
+    - Pcam1
+
+mural_cell:
+  name: Mural cell
+  markers:
+    - Acta2
+
+pericyte:
+  name: Pericyte
+  markers:
+    - Pdgfrb
+    - Eng
+
+fibroblast:
+  name: Fibroblast
+  markers:
+    - Fn1
+    - Vim
